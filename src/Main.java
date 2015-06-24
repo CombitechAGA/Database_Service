@@ -1,7 +1,7 @@
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 /**
- * Created by Fredrik on 2015-06-24.
+ * Created by Fredrik and Thomas on 2015-06-24.
  */
 public class Main {
     public static void main(String[] args) {
