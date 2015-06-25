@@ -1,4 +1,5 @@
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
@@ -8,7 +9,7 @@ import java.util.ArrayList;
  * Created by Fredrik on 2015-06-24.
  */
 public class DatabaseService {
-    private String broker = "tcp://81.236.122.249:1883";
+    private String broker = "tcp://mqtt.phelicks.net:1883";
     private String clientID = "DatabaseServiceClient";
     int qos = 2;
 
@@ -40,7 +41,10 @@ public class DatabaseService {
     }
 
     public void start() throws MqttException {
-        client.connect();
+        MqttConnectOptions options = new MqttConnectOptions();
+        options.setUserName("cab");
+        options.setPassword("sjuttongubbar".toCharArray());
+        client.connect(options);
         //PrintOutCallback printOutCallback = new PrintOutCallback();
         DatabaseCallback databaseCallback = new DatabaseCallback(databaseIP,databasePort);
         client.setCallback(databaseCallback);
