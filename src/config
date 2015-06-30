@@ -1,9 +1,0 @@
-Broker: "tcp://ip:port"
-ClientID:
-Databaseip: ip
-DatabasePort: port
-DatabaseUser: username
-DatabasePass: password
-SubTopics: "subscribe to?"
-PubTopics: "publish what?"
-

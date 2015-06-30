@@ -1,10 +1,14 @@
 import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+import java.util.*;
 
 /**
  * Created by Fredrik on 2015-06-24.
@@ -20,10 +24,16 @@ public class DatabaseCallback implements MqttCallback {
     MongoCollection<Document> distanceTraveledCollection;
 
 
-    public DatabaseCallback(String databaseIP,int databasePort){
+    public DatabaseCallback(String databaseIP,int databasePort, String dataBaseUser, String dataBasePass, String defultDataBase){
         this.databaseIP=databaseIP;
         this.databasePort=databasePort;
-        mongoClient = new MongoClient( databaseIP , databasePort );
+        char[] pass = dataBasePass.toCharArray();
+        String dataBase = defultDataBase;
+        String user = dataBaseUser;
+        List<MongoCredential> list = new ArrayList<MongoCredential>();
+        ServerAddress serverAddress = new ServerAddress(databaseIP,databasePort);
+        list.add(MongoCredential.createCredential(user, dataBase, pass));
+        mongoClient = new MongoClient(serverAddress, list);
         database = mongoClient.getDatabase("telemetry");
 
         speedCollection = database.getCollection("speed");
