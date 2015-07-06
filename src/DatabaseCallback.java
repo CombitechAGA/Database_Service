@@ -51,7 +51,6 @@ public class DatabaseCallback implements MqttCallback {
         System.out.println("Received a message:");
         System.out.println("Topic: "+topic);
         System.out.println("Message: "+mqttMessage.toString());
-
         Document doc;
         switch (topic){
             case "telemetry/speed":
