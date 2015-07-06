@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class DatabaseService {
     private String broker;// = "tcp://mqtt.phelicks.net:1883";
     private String clientID;// = "DatabaseServiceClient";
-    int qos = 2;
+    private int qos;// = 2;
     private String brokerUser;
     private String brokerPass;
     private String databaseIP;// = "81.236.122.195";
@@ -33,7 +33,7 @@ public class DatabaseService {
         client = new MqttClient(broker, clientID, persistence);
     }
 
-    //read config settings (IP, qos, etc,topics, address of the database)
+    //read config settings (IP, qos, etc,topics, address of the currentDataBase)
     private void readConfig(){
         BufferedReader br;
         ArrayList<String> list = new ArrayList<String>();
@@ -56,6 +56,7 @@ public class DatabaseService {
             dataBaseUser = list.get(6);
             dataBasePass = list.get(7);
             defultDataBase = list.get(8);
+            qos = Integer.parseInt(list.get(9));
             br.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,6 +67,8 @@ public class DatabaseService {
         topics.add("telemetry/speed");
         topics.add("telemetry/fuel");
         topics.add("telemetry/distanceTraveled");
+        topics.add("request/config");
+        topics.add("telemetry/snapshot");
     }
     private void subscribeToTopics() throws MqttException {
         for (String topic : topics){
@@ -79,7 +82,7 @@ public class DatabaseService {
         options.setPassword(brokerPass.toCharArray());
         client.connect(options);
         //PrintOutCallback printOutCallback = new PrintOutCallback();
-        DatabaseCallback databaseCallback = new DatabaseCallback(databaseIP,databasePort, dataBaseUser, dataBasePass, defultDataBase);
+        DatabaseCallback databaseCallback = new DatabaseCallback(databaseIP,databasePort, dataBaseUser, dataBasePass, defultDataBase, client);
         client.setCallback(databaseCallback);
         subscribeToTopics();
 

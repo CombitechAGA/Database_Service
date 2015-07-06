@@ -1,13 +1,14 @@
-import com.mongodb.MongoClient;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
+import com.mongodb.*;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import javax.print.Doc;
 import java.util.*;
 
 /**
@@ -18,13 +19,13 @@ public class DatabaseCallback implements MqttCallback {
     private String databaseIP;
     private int databasePort;
     private MongoClient mongoClient;
-    MongoDatabase database;
+    MongoDatabase currentDataBase;
     MongoCollection<Document> speedCollection;
     MongoCollection<Document> fuelCollection;
     MongoCollection<Document> distanceTraveledCollection;
 
 
-    public DatabaseCallback(String databaseIP,int databasePort, String dataBaseUser, String dataBasePass, String defultDataBase){
+    public DatabaseCallback(String databaseIP,int databasePort, String dataBaseUser, String dataBasePass, String defultDataBase, MqttClient mqttClient){
         this.databaseIP=databaseIP;
         this.databasePort=databasePort;
         char[] pass = dataBasePass.toCharArray();
@@ -34,11 +35,15 @@ public class DatabaseCallback implements MqttCallback {
         ServerAddress serverAddress = new ServerAddress(databaseIP,databasePort);
         list.add(MongoCredential.createCredential(user, dataBase, pass));
         mongoClient = new MongoClient(serverAddress, list);
-        database = mongoClient.getDatabase("telemetry");
+        currentDataBase = mongoClient.getDatabase(defultDataBase);
+        //currentDataBase.getCollection("configuration");
+        //BasicDBObject whereQuery = new BasicDBObject();
+        //whereQuery.put("name", "configuration");
 
-        speedCollection = database.getCollection("speed");
-        fuelCollection = database.getCollection("fuel");
-        distanceTraveledCollection = database.getCollection("distanceTraveled");
+
+        speedCollection = currentDataBase.getCollection("speed");
+        fuelCollection = currentDataBase.getCollection("fuel");
+        distanceTraveledCollection = currentDataBase.getCollection("distanceTraveled");
     }
 
     @Override
@@ -64,6 +69,34 @@ public class DatabaseCallback implements MqttCallback {
             case "telemetry/distanceTraveled":
                 doc = new Document("name","distanceTraveled").append("info",mqttMessage.toString());
                 distanceTraveledCollection.insertOne(doc);
+                break;
+            case "request/config":
+                String result="";
+                String deviceID = mqttMessage.toString();
+
+                currentDataBase = mongoClient.getDatabase("configuration");
+
+                FindIterable iterable = currentDataBase.getCollection("configuration").find();
+
+                Iterator iter = iterable.iterator();
+                iter.next();
+                Document temp;
+                while (iter.hasNext()){
+                    temp = (Document)iter.next();
+                    for(String key : temp.keySet()){
+                        result +=key+":"+temp.get(key)+";";
+                    }
+                }
+                result = result.substring(0,result.length()-1);
+                System.out.println(result);
+
+
+                currentDataBase = mongoClient.getDatabase("telemetry");
+
+                //publisha configen hit
+                break;
+            case "telemetry/snapshot":
+                System.out.println("fick snapshot: " + mqttMessage.toString());
                 break;
             default:
                 System.out.println("Error unknown topic:\""+topic+"\"");
