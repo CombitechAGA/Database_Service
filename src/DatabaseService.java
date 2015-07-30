@@ -69,6 +69,7 @@ public class DatabaseService {
         topics.add("telemetry/distanceTraveled");
         topics.add("request/config");
         topics.add("telemetry/snapshot");
+        topics.add("set/config");
     }
     private void subscribeToTopics() throws MqttException {
         for (String topic : topics){

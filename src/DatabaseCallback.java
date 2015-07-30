@@ -2,14 +2,16 @@ import com.mongodb.*;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.*;
 
 import javax.print.Doc;
 import java.util.*;
+import java.util.regex.Pattern;
+
+import static com.mongodb.client.model.Filters.eq;
 
 /**
  * Created by Fredrik on 2015-06-24.
@@ -23,6 +25,8 @@ public class DatabaseCallback implements MqttCallback {
     MongoCollection<Document> speedCollection;
     MongoCollection<Document> fuelCollection;
     MongoCollection<Document> distanceTraveledCollection;
+    MongoCollection<Document> configCollection;
+    MqttClient client;
 
 
     public DatabaseCallback(String databaseIP,int databasePort, String dataBaseUser, String dataBasePass, String defultDataBase, MqttClient mqttClient){
@@ -33,17 +37,14 @@ public class DatabaseCallback implements MqttCallback {
         String user = dataBaseUser;
         List<MongoCredential> list = new ArrayList<MongoCredential>();
         ServerAddress serverAddress = new ServerAddress(databaseIP,databasePort);
-        list.add(MongoCredential.createCredential(user, dataBase, pass));
-        mongoClient = new MongoClient(serverAddress, list);
+        //list.add(MongoCredential.createCredential(user, dataBase, pass));
+        //mongoClient = new MongoClient(serverAddress, list);
+        mongoClient = new MongoClient(serverAddress);
         currentDataBase = mongoClient.getDatabase(defultDataBase);
-        //currentDataBase.getCollection("configuration");
-        //BasicDBObject whereQuery = new BasicDBObject();
-        //whereQuery.put("name", "configuration");
-
-
         speedCollection = currentDataBase.getCollection("speed");
         fuelCollection = currentDataBase.getCollection("fuel");
         distanceTraveledCollection = currentDataBase.getCollection("distanceTraveled");
+        client = mqttClient;
     }
 
     @Override
@@ -63,6 +64,7 @@ public class DatabaseCallback implements MqttCallback {
                 speedCollection.insertOne(doc);
                 break;
             case "telemetry/fuel":
+                System.out.println("message: "+mqttMessage.toString() );
                 doc = new Document("name","fuel").append("info",mqttMessage.toString());
                 fuelCollection.insertOne(doc);
                 break;
@@ -70,27 +72,40 @@ public class DatabaseCallback implements MqttCallback {
                 doc = new Document("name","distanceTraveled").append("info",mqttMessage.toString());
                 distanceTraveledCollection.insertOne(doc);
                 break;
+            case "set/config":
+                //alltid uppdatering av en config, int en ny.
+                BasicDBObject newDocument = new BasicDBObject();
+                String message = mqttMessage.toString();
+                String id = message.substring(message.indexOf(":")+1,message.indexOf(";"));
+                for(String keyValuePair : message.split(";")){
+                    String key = keyValuePair.split(":")[0];
+                    String value = keyValuePair.split(":")[1];
+                    if (!key.equals("id")) {
+                        newDocument.append("$set", new BasicDBObject().append(key, value));
+                    }
+                    System.out.println("key: "+key);
+                    System.out.println("value:"+value);
+                }
+                currentDataBase = mongoClient.getDatabase("configuration");
+                configCollection = currentDataBase.getCollection("configuration");
+                BasicDBObject searchQuery = new BasicDBObject().append("id",id);
+
+                configCollection.updateOne(searchQuery, newDocument);
+                currentDataBase = mongoClient.getDatabase("telemetry");
+                break;
             case "request/config":
-                String result="";
                 String deviceID = mqttMessage.toString();
 
                 currentDataBase = mongoClient.getDatabase("configuration");
+                configCollection = currentDataBase.getCollection("configuration");
+                BasicDBObject requestedConfig = new BasicDBObject().append("id",deviceID);
 
-                FindIterable iterable = currentDataBase.getCollection("configuration").find();
+                FindIterable<Document> config = configCollection.find(requestedConfig);
+                Document configToSend = config.first();
 
-                Iterator iter = iterable.iterator();
-                iter.next();
-                Document temp;
-                while (iter.hasNext()){
-                    temp = (Document)iter.next();
-                    for(String key : temp.keySet()){
-                        result +=key+":"+temp.get(key)+";";
-                    }
-                }
-                result = result.substring(0,result.length()-1);
-                System.out.println(result);
-
-
+                if (configToSend != null){
+                    sendConfigToClient(deviceID, configToSend);
+               }
                 currentDataBase = mongoClient.getDatabase("telemetry");
 
                 //publisha configen hit
@@ -102,15 +117,19 @@ public class DatabaseCallback implements MqttCallback {
                 System.out.println("Error unknown topic:\""+topic+"\"");
                 System.exit(-1);
         }
-
-
-
-
-
     }
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
 
+    }
+
+    public void sendConfigToClient(String clientID,Document config){
+        try {
+            client.publish(clientID+"/config",new MqttMessage(config.toString().getBytes()));
+            System.out.println("config sent!!");
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
     }
 }
