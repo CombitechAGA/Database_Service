@@ -104,8 +104,10 @@ public class DatabaseCallback implements MqttCallback {
                 Document configToSend = config.first();
 
                 if (configToSend != null){
+
                     sendConfigToClient(deviceID, configToSend);
                }
+
                 currentDataBase = mongoClient.getDatabase("telemetry");
 
                 //publisha configen hit
@@ -125,8 +127,19 @@ public class DatabaseCallback implements MqttCallback {
     }
 
     public void sendConfigToClient(String clientID,Document config){
+        String result = "";
         try {
-            client.publish(clientID+"/config",new MqttMessage(config.toString().getBytes()));
+//            System.out.println(config.toJson().toString());
+              for (String key :config.keySet()){
+                  if (!key.equals("id") && !key.equals("_id")){
+                      System.out.println(key);
+                      System.out.println(config.get(key));
+                      result+=key+"#"+config.get(key)+"\n";
+                  }
+              }
+            result = result.substring(0,result.length());
+            System.out.println(result);
+            client.publish(clientID+"/config",new MqttMessage(result.getBytes()));
             System.out.println("config sent!!");
         } catch (MqttException e) {
             e.printStackTrace();
