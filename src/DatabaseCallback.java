@@ -29,7 +29,8 @@ public class DatabaseCallback implements MqttCallback {
     MqttClient client;
 
 
-    public DatabaseCallback(String databaseIP,int databasePort, String dataBaseUser, String dataBasePass, String defultDataBase, MqttClient mqttClient){
+    public DatabaseCallback( String databaseIP,int databasePort, String dataBaseUser, String dataBasePass, String defultDataBase, MqttClient mqttClient){
+
         this.databaseIP=databaseIP;
         this.databasePort=databasePort;
         char[] pass = dataBasePass.toCharArray();
@@ -104,9 +105,17 @@ public class DatabaseCallback implements MqttCallback {
                 Document configToSend = config.first();
 
                 if (configToSend != null){
-
-                    sendConfigToClient(deviceID, configToSend);
-               }
+                    String result = "";
+                    for (String key :configToSend.keySet()){
+                        if (!key.equals("id") && !key.equals("_id")){
+                            System.out.println(key);
+                            System.out.println(configToSend.get(key));
+                            result+=key+"#"+configToSend.get(key)+"\n";
+                        }
+                    }
+                    System.out.println("här är vad vi skickade:" +  result);
+                    new PublishThread(client,deviceID+"/config",result).start();
+                }
 
                 currentDataBase = mongoClient.getDatabase("telemetry");
 
@@ -123,12 +132,13 @@ public class DatabaseCallback implements MqttCallback {
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+        System.out.println("nu har jag skickat config!!");
 
     }
 
     public void sendConfigToClient(String clientID,Document config){
         String result = "";
-        try {
+        //try {
 //            System.out.println(config.toJson().toString());
               for (String key :config.keySet()){
                   if (!key.equals("id") && !key.equals("_id")){
@@ -139,10 +149,10 @@ public class DatabaseCallback implements MqttCallback {
               }
             result = result.substring(0,result.length());
             System.out.println(result);
-            client.publish(clientID+"/config",new MqttMessage(result.getBytes()));
+            //client.publish(clientID+"/config",new MqttMessage(result.getBytes()));
             System.out.println("config sent!!");
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
+       // } catch (MqttException e) {
+         //   e.printStackTrace();
+       // }
     }
 }
