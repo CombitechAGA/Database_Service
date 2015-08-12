@@ -70,6 +70,7 @@ public class DatabaseService {
         topics.add("request/config");
         topics.add("telemetry/snapshot");
         topics.add("set/config");
+        topics.add("new/config");
     }
     private void subscribeToTopics() throws MqttException {
         for (String topic : topics){

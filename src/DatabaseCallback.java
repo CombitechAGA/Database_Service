@@ -73,6 +73,19 @@ public class DatabaseCallback implements MqttCallback {
                 doc = new Document("name","distanceTraveled").append("info",mqttMessage.toString());
                 distanceTraveledCollection.insertOne(doc);
                 break;
+            case "new/config":
+                currentDataBase = mongoClient.getDatabase("configuration");
+                configCollection = currentDataBase.getCollection("configuration");
+                String newConfig = mqttMessage.toString();
+                String carid = newConfig.substring(newConfig.indexOf(":")+1,newConfig.indexOf(";"));
+                doc = new Document();
+                for(String keyValuePair : newConfig.split(";")) {
+                    String key = keyValuePair.split(":")[0];
+                    String value = keyValuePair.split(":")[1];
+                    doc.append(key, value);
+                }
+                configCollection.insertOne(doc);
+                break;
             case "set/config":
                 //alltid uppdatering av en config, int en ny.
                 BasicDBObject newDocument = new BasicDBObject();
