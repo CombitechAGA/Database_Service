@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Aga%20Database%20Service:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Aga_20Database_20Service_jar</output-path>
+    <root id="archive" name="Aga%20Database%20Service.jar">
+      <element id="module-output" name="Aga%20Database%20Service" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/org.eclipse.paho.client.mqttv3-1.0.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/mongo-java-driver-3.0.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

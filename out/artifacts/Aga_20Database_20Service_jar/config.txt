@@ -1,0 +1,8 @@
+Broker#tcp://mqtt.phelicks.net:1883
+ClientID#DatabaseServiceClient
+Databaseip#52.17.161.142
+DatabasePort#27017
+BrokerUser#cab
+BrokerPass#sjuttongubbar
+SubTopics#"subscribe to?"
+PubTopics#"publish what?"

@@ -17,7 +17,9 @@ import static com.mongodb.client.model.Filters.eq;
  * Created by Fredrik on 2015-06-24.
  */
 public class DatabaseCallback implements MqttCallback {
-
+    private String message;
+    private String id;
+    private BasicDBObject requestedConfig;
     private String databaseIP;
     private int databasePort;
     private MongoClient mongoClient;
@@ -27,6 +29,7 @@ public class DatabaseCallback implements MqttCallback {
     MongoCollection<Document> distanceTraveledCollection;
     MongoCollection<Document> configCollection;
     MqttClient client;
+    private FindIterable<Document> config;
 
 
     public DatabaseCallback( String databaseIP,int databasePort, String dataBaseUser, String dataBasePass, String defultDataBase, MqttClient mqttClient){
@@ -74,37 +77,57 @@ public class DatabaseCallback implements MqttCallback {
                 distanceTraveledCollection.insertOne(doc);
                 break;
             case "new/config":
+                message = mqttMessage.toString();
+                id = message.substring(message.indexOf(":") + 1, message.indexOf(";"));
+                System.out.println("id: " + id);
                 currentDataBase = mongoClient.getDatabase("configuration");
                 configCollection = currentDataBase.getCollection("configuration");
-                String newConfig = mqttMessage.toString();
-                String carid = newConfig.substring(newConfig.indexOf(":")+1,newConfig.indexOf(";"));
-                doc = new Document();
-                for(String keyValuePair : newConfig.split(";")) {
-                    String key = keyValuePair.split(":")[0];
-                    String value = keyValuePair.split(":")[1];
-                    doc.append(key, value);
+                requestedConfig = new BasicDBObject().append("id", id);
+                config = configCollection.find(requestedConfig);
+                if (config.first() != null) {
+                    System.out.println("failedToCreateNewDevice\",\"The device id must be unique\"");
+                    new PublishThread(client,id+"/failedToCreateNewDevice","That device id is all ready in use.").start();
+                } else {
+                    doc = new Document();
+                    for(String keyValuePair : message.split(";")) {
+                        String key = keyValuePair.split(":")[0];
+                        String value = keyValuePair.split(":")[1];
+                        doc.append(key, value);
+                    }
+                    configCollection.insertOne(doc);
+                    //String newConfig = mqttMessage.toString();
+                    //String carid = newConfig.substring(newConfig.indexOf(":")+1,newConfig.indexOf(";"));
                 }
-                configCollection.insertOne(doc);
+                currentDataBase = mongoClient.getDatabase("telemetry");
                 break;
             case "set/config":
                 //alltid uppdatering av en config, int en ny.
                 BasicDBObject newDocument = new BasicDBObject();
-                String message = mqttMessage.toString();
-                String id = message.substring(message.indexOf(":")+1,message.indexOf(";"));
-                for(String keyValuePair : message.split(";")){
-                    String key = keyValuePair.split(":")[0];
-                    String value = keyValuePair.split(":")[1];
-                    if (!key.equals("id")) {
-                        newDocument.append("$set", new BasicDBObject().append(key, value));
-                    }
-                    System.out.println("key: "+key);
-                    System.out.println("value:"+value);
-                }
-                currentDataBase = mongoClient.getDatabase("configuration");
-                configCollection = currentDataBase.getCollection("configuration");
-                BasicDBObject searchQuery = new BasicDBObject().append("id",id);
+                message = mqttMessage.toString();
+                id = message.substring(message.indexOf(":") + 1, message.indexOf(";"));
 
-                configCollection.updateOne(searchQuery, newDocument);
+                requestedConfig = new BasicDBObject().append("id", id);
+                config = configCollection.find(requestedConfig);
+                if (config.first() == null) {
+                    System.out.println(id+"/failedToUpdate");
+                    new PublishThread(client,id+"/failedToUpdate","That device id does not exist. Create a new device insted.").start();
+                } else {
+
+                    for(String keyValuePair : message.split(";")){
+                        String key = keyValuePair.split(":")[0];
+                        String value = keyValuePair.split(":")[1];
+                        if (!key.equals("id")) {
+                            newDocument.append("$set", new BasicDBObject().append(key, value));
+                        }
+                        System.out.println("key: "+key);
+                        System.out.println("value:"+value);
+                    }
+                    currentDataBase = mongoClient.getDatabase("configuration");
+                    configCollection = currentDataBase.getCollection("configuration");
+                    BasicDBObject searchQuery = new BasicDBObject().append("id",id);
+
+                    configCollection.updateOne(searchQuery, newDocument);
+                }
                 currentDataBase = mongoClient.getDatabase("telemetry");
                 break;
             case "request/config":
@@ -112,9 +135,9 @@ public class DatabaseCallback implements MqttCallback {
 
                 currentDataBase = mongoClient.getDatabase("configuration");
                 configCollection = currentDataBase.getCollection("configuration");
-                BasicDBObject requestedConfig = new BasicDBObject().append("id",deviceID);
+                requestedConfig = new BasicDBObject().append("id", deviceID);
 
-                FindIterable<Document> config = configCollection.find(requestedConfig);
+                config = configCollection.find(requestedConfig);
                 Document configToSend = config.first();
 
                 if (configToSend != null){
