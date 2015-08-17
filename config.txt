@@ -1,6 +1,6 @@
 Broker#tcp://mqtt.phelicks.net:1883
 ClientID#databaseService
-Databaseip#81.236.122.138
+Databaseip#mqtt.phelicks.net
 DatabasePort#27017
 BrokerUser#cab
 BrokerPass#sjuttongubbar
