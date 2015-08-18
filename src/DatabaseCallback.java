@@ -17,6 +17,7 @@ import static com.mongodb.client.model.Filters.eq;
  * Created by Fredrik on 2015-06-24.
  */
 public class DatabaseCallback implements MqttCallback {
+
     private String message;
     private String id;
     private BasicDBObject requestedConfig;
@@ -28,6 +29,7 @@ public class DatabaseCallback implements MqttCallback {
     MongoCollection<Document> fuelCollection;
     MongoCollection<Document> distanceTraveledCollection;
     MongoCollection<Document> configCollection;
+    MongoCollection<Document> snapshotCollection;
     MqttClient client;
     private FindIterable<Document> config;
 
@@ -43,11 +45,12 @@ public class DatabaseCallback implements MqttCallback {
         ServerAddress serverAddress = new ServerAddress(databaseIP,databasePort);
         list.add(MongoCredential.createCredential(user, dataBase, pass));
         mongoClient = new MongoClient(serverAddress, list);
-        //mongoClient = new MongoClient(serverAddress);
+//        mongoClient = new MongoClient(serverAddress);
         currentDataBase = mongoClient.getDatabase(defultDataBase);
         speedCollection = currentDataBase.getCollection("speed");
         fuelCollection = currentDataBase.getCollection("fuel");
         distanceTraveledCollection = currentDataBase.getCollection("distanceTraveled");
+        snapshotCollection = currentDataBase.getCollection("snapshot");
         client = mqttClient;
     }
 
@@ -62,18 +65,25 @@ public class DatabaseCallback implements MqttCallback {
         System.out.println("Topic: "+topic);
         System.out.println("Message: "+mqttMessage.toString());
         Document doc;
+        String[] splittedString;
         switch (topic){
             case "telemetry/speed":
-                doc = new Document("name","Speed").append("info",mqttMessage.toString());
+                splittedString = mqttMessage.toString().split(";");
+//                doc = new Document("name","Speed").append("info",mqttMessage.toString());
+                doc = new Document("name","speed").append("carID",splittedString[0]).append("timestamp",splittedString[1]).append("speedInfo",splittedString[2]);
                 speedCollection.insertOne(doc);
                 break;
             case "telemetry/fuel":
                 System.out.println("message: "+mqttMessage.toString() );
-                doc = new Document("name","fuel").append("info",mqttMessage.toString());
+                splittedString = mqttMessage.toString().split(";");
+//                doc = new Document("name","fuel").append("info",mqttMessage.toString());
+                doc = new Document("name","fuel").append("carID",splittedString[0]).append("timestamp",splittedString[1]).append("fuelInfo",splittedString[2]);
                 fuelCollection.insertOne(doc);
                 break;
             case "telemetry/distanceTraveled":
-                doc = new Document("name","distanceTraveled").append("info",mqttMessage.toString());
+                splittedString = mqttMessage.toString().split(";");
+//                doc = new Document("name","distanceTraveled").append("info",mqttMessage.toString());
+                doc = new Document("name","distanceTraveled").append("carID",splittedString[0]).append("timestamp",splittedString[1]).append("distanceTraveledinfo",splittedString[2]);
                 distanceTraveledCollection.insertOne(doc);
                 break;
             case "new/config":
@@ -158,6 +168,24 @@ public class DatabaseCallback implements MqttCallback {
                 //publisha configen hit
                 break;
             case "telemetry/snapshot":
+                splittedString = mqttMessage.toString().split(";");
+//                doc = new Document("name","snapshot").append("carID",splittedString[0].split("carID:")[1]).append("timestamp",splittedString[1].split("timestamp:")[1]).append("fuel",splittedString[2].split("fuel:")[1]);
+//                doc.append("speed",splittedString[3].split("speed:")[1]).append("distanceTraveled",splittedString[4].split("distanceTraveled:")[1]).append("longitude",splittedString[5].split("longitude")[1]);
+//                doc.append("latitude",splittedString)
+                doc = new Document("name","snapshot");
+                for(String keyAndValue : splittedString){
+                    String[] keyAndValueSplitted=keyAndValue.split(":");
+                    String key = keyAndValueSplitted[0];
+                    if(!key.equals("carID")){
+                        doc.append(key,keyAndValueSplitted[1]);
+                    }
+                    else{
+                        doc.append(key,keyAndValue.substring(4));
+                    }
+
+                }
+
+                snapshotCollection.insertOne(doc);
                 System.out.println("fick snapshot: " + mqttMessage.toString());
                 break;
             default:
