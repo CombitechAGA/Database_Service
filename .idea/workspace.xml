@@ -7,6 +7,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6c781280-d2c4-48a4-a28d-e33eb79a3c86" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Aga%20Database%20Service/DatabaseCallback.class" afterPath="$PROJECT_DIR$/out/production/Aga%20Database%20Service/DatabaseCallback.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/DatabaseCallback.java" afterPath="$PROJECT_DIR$/src/DatabaseCallback.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config.txt" afterPath="$PROJECT_DIR$/config.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Aga%20Database%20Service.iws" />
@@ -40,6 +43,18 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="DatabaseService.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/DatabaseService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="58" column="48" selection-start-line="58" selection-start-column="48" selection-end-line="58" selection-end-column="48" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="PrintOutCallback.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/PrintOutCallback.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -53,8 +68,8 @@
       <file leaf-file-name="DatabaseCallback.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/DatabaseCallback.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="95" column="21" selection-start-line="95" selection-start-column="21" selection-end-line="95" selection-end-column="21" />
+            <state vertical-scroll-proportion="0.13340807">
+              <caret line="52" column="0" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -78,7 +93,7 @@
         <entry file="file://$PROJECT_DIR$/config.txt">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="9" column="18" selection-start-line="9" selection-start-column="18" selection-end-line="9" selection-end-column="18" />
+              <caret line="2" column="28" selection-start-line="2" selection-start-column="28" selection-end-line="2" selection-end-column="28" />
               <folding />
             </state>
           </provider>
@@ -106,11 +121,11 @@
       <list>
         <option value="$PROJECT_DIR$/src/Main.java" />
         <option value="$PROJECT_DIR$/src/config" />
-        <option value="$PROJECT_DIR$/config.txt" />
         <option value="$PROJECT_DIR$/src/Monitor.java" />
         <option value="$PROJECT_DIR$/src/ConfigSender.java" />
         <option value="$PROJECT_DIR$/src/PublishThread.java" />
         <option value="$PROJECT_DIR$/src/DatabaseService.java" />
+        <option value="$PROJECT_DIR$/config.txt" />
         <option value="$PROJECT_DIR$/src/DatabaseCallback.java" />
       </list>
     </option>
@@ -158,6 +173,9 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -206,9 +224,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scratches" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -220,7 +235,7 @@
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../GeofenceService" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="OverrideImplement.overriding.sorted" value="false" />
   </component>
@@ -551,6 +566,12 @@
       <workItem from="1439449380944" duration="599000" />
       <workItem from="1439455348746" duration="724000" />
       <workItem from="1439533960776" duration="63000" />
+      <workItem from="1439809643664" duration="599000" />
+      <workItem from="1439878053932" duration="26000" />
+      <workItem from="1439878806835" duration="981000" />
+      <workItem from="1439901943672" duration="24000" />
+      <workItem from="1439902557401" duration="614000" />
+      <workItem from="1439903946234" duration="89000" />
     </task>
     <task id="LOCAL-00001" summary="Test">
       <created>1435147171366</created>
@@ -598,10 +619,10 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="80474000" />
+    <option name="totallyTimeSpent" value="82807000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1050" extended-state="6" />
+    <frame x="-9" y="-9" width="1938" height="1050" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -613,7 +634,7 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30810812" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26927084" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26927084" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1046,10 +1067,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config.txt">
+    <entry file="file://$PROJECT_DIR$/src/PrintOutCallback.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="9" column="18" selection-start-line="9" selection-start-column="18" selection-end-line="9" selection-end-column="18" />
+          <caret line="15" column="50" selection-start-line="15" selection-start-column="50" selection-end-line="15" selection-end-column="50" />
           <folding />
         </state>
       </provider>
@@ -1062,13 +1083,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/DatabaseService.java">
+    <entry file="file://$PROJECT_DIR$/config.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.2704175">
-          <caret line="52" column="46" selection-start-line="52" selection-start-column="46" selection-end-line="52" selection-end-column="46" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.0">
+          <caret line="2" column="28" selection-start-line="2" selection-start-column="28" selection-end-line="2" selection-end-column="28" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1082,18 +1101,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/PrintOutCallback.java">
+    <entry file="file://$PROJECT_DIR$/src/DatabaseService.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="15" column="50" selection-start-line="15" selection-start-column="50" selection-end-line="15" selection-end-column="50" />
-          <folding />
+          <caret line="58" column="48" selection-start-line="58" selection-start-column="48" selection-end-line="58" selection-end-column="48" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/DatabaseCallback.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="95" column="21" selection-start-line="95" selection-start-column="21" selection-end-line="95" selection-end-column="21" />
+        <state vertical-scroll-proportion="0.13340807">
+          <caret line="52" column="0" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

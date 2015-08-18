@@ -41,9 +41,9 @@ public class DatabaseCallback implements MqttCallback {
         String user = dataBaseUser;
         List<MongoCredential> list = new ArrayList<MongoCredential>();
         ServerAddress serverAddress = new ServerAddress(databaseIP,databasePort);
-        //list.add(MongoCredential.createCredential(user, dataBase, pass));
-        //mongoClient = new MongoClient(serverAddress, list);
-        mongoClient = new MongoClient(serverAddress);
+        list.add(MongoCredential.createCredential(user, dataBase, pass));
+        mongoClient = new MongoClient(serverAddress, list);
+        //mongoClient = new MongoClient(serverAddress);
         currentDataBase = mongoClient.getDatabase(defultDataBase);
         speedCollection = currentDataBase.getCollection("speed");
         fuelCollection = currentDataBase.getCollection("fuel");
