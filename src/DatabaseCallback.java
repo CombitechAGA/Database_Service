@@ -8,6 +8,8 @@ import org.bson.Document;
 import org.eclipse.paho.client.mqttv3.*;
 
 import javax.print.Doc;
+import java.text.DateFormat;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -70,20 +72,20 @@ public class DatabaseCallback implements MqttCallback {
             case "telemetry/speed":
                 splittedString = mqttMessage.toString().split(";");
 //                doc = new Document("name","Speed").append("info",mqttMessage.toString());
-                doc = new Document("name","speed").append("carID",splittedString[0]).append("timestamp",splittedString[1]).append("speedInfo",splittedString[2]);
+                doc = new Document("name","speed").append("carID",splittedString[0]).append("timestamp", new Date(Long.parseLong(splittedString[1]))).append("speedInfo",Double.parseDouble(splittedString[2]));
                 speedCollection.insertOne(doc);
                 break;
             case "telemetry/fuel":
                 System.out.println("message: "+mqttMessage.toString() );
                 splittedString = mqttMessage.toString().split(";");
 //                doc = new Document("name","fuel").append("info",mqttMessage.toString());
-                doc = new Document("name","fuel").append("carID",splittedString[0]).append("timestamp",splittedString[1]).append("fuelInfo",splittedString[2]);
+                doc = new Document("name","fuel").append("carID",splittedString[0]).append("timestamp",new Date(Long.parseLong(splittedString[1]))).append("fuelInfo",Double.parseDouble(splittedString[2]));
                 fuelCollection.insertOne(doc);
                 break;
             case "telemetry/distanceTraveled":
                 splittedString = mqttMessage.toString().split(";");
 //                doc = new Document("name","distanceTraveled").append("info",mqttMessage.toString());
-                doc = new Document("name","distanceTraveled").append("carID",splittedString[0]).append("timestamp",splittedString[1]).append("distanceTraveledinfo",splittedString[2]);
+                doc = new Document("name","distanceTraveled").append("carID",splittedString[0]).append("timestamp",new Date(Long.parseLong(splittedString[1]))).append("distanceTraveledinfo",Long.parseLong(splittedString[2]));
                 distanceTraveledCollection.insertOne(doc);
                 break;
             case "new/config":
@@ -176,11 +178,46 @@ public class DatabaseCallback implements MqttCallback {
                 for(String keyAndValue : splittedString){
                     String[] keyAndValueSplitted=keyAndValue.split(":");
                     String key = keyAndValueSplitted[0];
-                    if(!key.equals("carID")){
-                        doc.append(key,keyAndValueSplitted[1]);
-                    }
-                    else{
-                        doc.append(key,keyAndValue.substring(4));
+                    String value = keyAndValueSplitted[1];
+                    System.out.println("keyAndValue:"+keyAndValue);
+                    System.out.println("key: "+key);
+                    System.out.println("value:"+value);
+
+ //                    if(!key.equals("carID")){
+//                        doc.append(key,keyAndValueSplitted[1]);
+//                    }
+//                    else{
+//                        doc.append(key,keyAndValue.substring(4));
+//                    }
+                    switch (key) {
+                        case "carID":
+                            doc.append(key,keyAndValue.substring(4));
+                            break;
+
+                        case "timestamp":
+                            doc.append(key,new Date(Long.parseLong(value)));
+                            break;
+                        case "fuel":
+                            doc.append(key,Double.parseDouble(value));
+                            break;
+                        case "speed":
+                            doc.append(key,Double.parseDouble(value));
+                            break;
+                        case "distanceTraveled":
+                            doc.append(key,Long.parseLong(value));
+                            break;
+                        case "longitude":
+                            doc.append(key, Double.parseDouble(value));
+                            break;
+                        case "latitude":
+                            doc.append(key,Double.parseDouble(value));
+                            break;
+                        case "zbeename":
+                            doc.append(key,value);
+                            break;
+                        default:
+                            doc.append(key,value);
+                            break;
                     }
 
                 }
