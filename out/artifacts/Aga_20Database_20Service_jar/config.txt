@@ -1,8 +1,12 @@
 Broker#tcp://mqtt.phelicks.net:1883
-ClientID#DatabaseServiceClient
-Databaseip#52.17.161.142
+ClientID#databaseService
+Databaseip#mqtt.phelicks.net
 DatabasePort#27017
 BrokerUser#cab
 BrokerPass#sjuttongubbar
+DataBaseUser#dataBaseService
+DataBasePass#password
+DefultDataBase#telemetry
+QualityOfService#2
 SubTopics#"subscribe to?"
 PubTopics#"publish what?"
